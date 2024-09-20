@@ -1,5 +1,6 @@
 import 'package:expense_tracker/widgets/expenses_list/expenses_list.dart';
 import 'package:expense_tracker/models/expense.dart';
+import 'package:expense_tracker/widgets/new_expense.dart';
 import 'package:flutter/material.dart';
 
 class Expenses extends StatefulWidget {
@@ -35,7 +36,7 @@ class _ExpensesState extends State<Expenses> {
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
-            onPressed: _addExpense,
+            onPressed: _showAddExpense,
           ),
         ],
       ),
@@ -43,17 +44,29 @@ class _ExpensesState extends State<Expenses> {
         children: [
           const Text('The chart'),
           Expanded(
-            child: ExpensesList(expenses: _expenses),
+            child: ExpensesList(
+              expenses: _expenses,
+              onRemoveExpense: _removeExpense,
+            ),
           ),
         ],
       ),
     );
   }
 
-  void _addExpense() {
+  void _showAddExpense() {
     showModalBottomSheet(
+      isScrollControlled: true,
       context: context,
-      builder: (ctx) => const Text('+'),
+      builder: (ctx) => NewExpense(onAddExpense: _addExpense),
     );
+  }
+
+  void _addExpense(Expense expense) {
+    setState(() => _expenses.add(expense));
+  }
+
+  void _removeExpense(Expense expense) {
+    setState(() => _expenses.remove(expense));
   }
 }
