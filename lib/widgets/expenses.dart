@@ -4,6 +4,8 @@ import 'package:expense_tracker/models/expense.dart';
 import 'package:expense_tracker/widgets/new_expense.dart';
 import 'package:flutter/material.dart';
 
+const maxPortraitModeWidth = 600;
+
 class Expenses extends StatefulWidget {
   const Expenses({super.key});
 
@@ -31,6 +33,8 @@ class _ExpensesState extends State<Expenses> {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+
     Widget mainContent =
         const Center(child: Text('No expenses. Add something'));
 
@@ -51,19 +55,29 @@ class _ExpensesState extends State<Expenses> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Chart(expenses: _expenses),
-          Expanded(
-            child: mainContent,
-          ),
-        ],
-      ),
+      body: width < maxPortraitModeWidth
+          ? Column(
+              children: [
+                Chart(expenses: _expenses),
+                Expanded(
+                  child: mainContent,
+                ),
+              ],
+            )
+          : Row(
+              children: [
+                Expanded(child: Chart(expenses: _expenses)),
+                Expanded(
+                  child: mainContent,
+                ),
+              ],
+            ),
     );
   }
 
   void _showAddExpense() {
     showModalBottomSheet(
+      useSafeArea: true,
       isScrollControlled: true,
       context: context,
       builder: (ctx) => NewExpense(onAddExpense: _addExpense),
